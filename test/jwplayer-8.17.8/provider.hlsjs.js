@@ -4490,36 +4490,46 @@
                                 } else d.b.warn("Missing decryption data on fragment in onKeyLoading")
                             }, a.loadsuccess = function(e, t, r) {
                                 var i = r.frag;
-                                var v, k = new Uint8Array(e.data),
-                                    h = String.fromCharCode.apply(null, new Uint8Array(k));
-                                console.log('k',k);
-                                console.log('h',h);
-                                if (void 0 != window.kv && "" != window.kv && h == window.lk) {
-                                    for (var b = new ArrayBuffer(window.kv.length), p = new Uint8Array(b), j = 0, strLen = window.kv.length; j < strLen; j++) p[j] = window.kv.charCodeAt(j);
-                                    v = p
-                                    console.log('o',window.kv);
-                                    console.log('b',b);
-                                    console.log('v',v);
-                                } else {
-                                    for (var m = CryptoJS.enc.Utf8.parse("j91xEtOM9O33dbSGTYpIx3pCpo7N52fD"), iv = "I8zyA4lVhMCaJ5Kg", cipher = CryptoJS.AES.decrypt(h, m, {
-                                            iv: CryptoJS.enc.Utf8.parse(iv),
-                                            padding: CryptoJS.pad.Pkcs7,
-                                            mode: CryptoJS.mode.CBC
-                                        }), n = CryptoJS.enc.Utf8.stringify(cipher).toString(), bytes = [], i = 0; i < n.length - 1; i += 2) bytes.push(parseInt(n.substr(i,
-                                        2), 16));
-                                    var o = String.fromCharCode.apply(String, bytes);
-                                    b = new ArrayBuffer(o.length);
-                                    v = new Uint8Array(b);
-                                    j = 0;
-                                    for (var l = o.length; j < l; j++) v[j] = o.charCodeAt(j);
-                                    window.lk = h;
-                                    window.kv = o
-                                    console.log('by',bytes);
-                                    console.log('o',o);
-                                    console.log('b',b);
-                                    console.log('v',v);
-                                };
-                                i.decryptdata ? (this.decryptkey = i.decryptdata.key = v, i.loader = void 0, delete this.loaders[i.type], this.hls.trigger(u.a.KEY_LOADED, {
+                                var decrypt_key = new Uint8Array(e.data);
+                                console.log('key loadsuccess e.data:', e.data);
+                                //console.log('key loadsuccess new Uint8Array(e.data):', new Uint8Array(e.data));
+                                console.log('key loadsuccess decrypt_key:', decrypt_key);
+                                
+                                var decodedStr = String.fromCharCode.apply(null, new Uint8Array(decrypt_key));
+                                console.log('key loadsuccess decodedStr:', decodedStr);
+                                
+                                var base64String = window.btoa(decodedStr);
+                                console.log('key loadsuccess base64String:', base64String);
+                                
+                                const key = CryptoJS.enc.Utf8.parse('j91xEtOM9O33dbSGTYpIx3pCpo7N52fD');
+                                let iv = 'I8zyA4lVhMCaJ5Kg';
+                                let cipher = CryptoJS.AES.decrypt(decodedStr, key, {
+                                   iv: CryptoJS.enc.Utf8.parse(iv),
+                                   padding: CryptoJS.pad.Pkcs7,
+                                   mode: CryptoJS.mode.CBC
+                                });
+                                let key2 = CryptoJS.enc.Utf8.stringify(cipher).toString();
+                                console.log('aesDecrypt =>', key2);
+                                
+                                /*var bytes = [];
+                                for(var i=0; i< key2.length-1; i+=2){
+                                  bytes.push(parseInt(key2.substr(i, 2), 16));
+                                }
+                                var str = String.fromCharCode.apply(String, bytes);
+                                console.log('key loadsuccess str:', str);*/
+                                
+                                let key3 = window.atob(key2);
+                                console.log('key3 =>', key3);
+                                
+                                var buf = new ArrayBuffer(key3.length);
+                                var bufView = new Uint8Array(buf);
+                                for (var j = 0, strLen = key3.length; j < strLen; j++) {
+                                  bufView[j] = key3.charCodeAt(j);
+                                }
+                                console.log('key loadsuccess buf:', buf);
+                                console.log('key loadsuccess bufView:', bufView);
+                                
+                                i.decryptdata ? (this.decryptkey = i.decryptdata.key = bufView, i.loader = void 0, delete this.loaders[i.type], this.hls.trigger(u.a.KEY_LOADED, {
                                     frag: i
                                 })) : d.b.error("after key load, decryptdata unset")
                             }, a.loaderror = function(e, t) {
