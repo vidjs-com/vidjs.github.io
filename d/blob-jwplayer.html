@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./jwplayer-8.17.7/jwplayer.js" type="text/javascript"></script>
+</head>
+<body>
+  <center>
+    <div id='myvideo'></div>
+  </center>
+  <script type='text/javascript'>
+
+jwplayer.key = "3SYLbRo6MN5cBDxwpZh3dl1gb0lMTUOos31M5hoAlf4=";
+var player = jwplayer('myvideo').setup({
+  base: './jwplayer-8.17.7/',
+  width: '640',
+  aspectratio: '16:9',
+  file: 'https://stream.mux.com/dt7i6WNyYd8ns4V2AeJHWNKaw00aiChpR.m3u8',
+  mute: true
+});
+
+const m3u8date = '#EXTM3U\r\n#EXT-X-VERSION:3\r\n#EXT-X-STREAM-INF:BANDWIDTH=607794,CODECS="avc1.4d401e,mp4a.40.2",RESOLUTION=640x360\r\nhttps://www.radiantmediaplayer.com/media/rmp-segment/bbb-abr-aes/chunklist_b607794.m3u8\r\n#EXT-X-STREAM-INF:BANDWIDTH=1544757,CODECS="avc1.64001f,mp4a.40.2",RESOLUTION=960x540\r\nhttps://www.radiantmediaplayer.com/media/rmp-segment/bbb-abr-aes/chunklist_b1544757.m3u8\r\n#EXT-X-STREAM-INF:BANDWIDTH=2189923,CODECS="avc1.4d401f,mp4a.40.2",RESOLUTION=1280x720\r\nhttps://www.radiantmediaplayer.com/media/rmp-segment/bbb-abr-aes/chunklist_b2189923.m3u8';
+var blobhls = new Blob(
+  [ m3u8date ],
+  {
+    type : 'application/vnd.apple.mpegurl'
+  }
+);
+const urlhls = URL.createObjectURL(blobhls);
+
+player.load([{
+  file: urlhls,
+  type : 'application/vnd.apple.mpegurl'
+}]);
+player.play();
+
+jwplayer().on('firstFrame' , function(evt){
+  console.log(urlhls, evt);
+  URL.revokeObjectURL(urlhls);
+});
+
+/*
+#EXTM3U
+#EXT-X-VERSION:3
+#EXT-X-STREAM-INF:BANDWIDTH=607794,CODECS="avc1.4d401e,mp4a.40.2",RESOLUTION=640x360
+https://www.radiantmediaplayer.com/media/rmp-segment/bbb-abr-aes/chunklist_b607794.m3u8
+#EXT-X-STREAM-INF:BANDWIDTH=1544757,CODECS="avc1.64001f,mp4a.40.2",RESOLUTION=960x540
+https://www.radiantmediaplayer.com/media/rmp-segment/bbb-abr-aes/chunklist_b1544757.m3u8
+#EXT-X-STREAM-INF:BANDWIDTH=2189923,CODECS="avc1.4d401f,mp4a.40.2",RESOLUTION=1280x720
+https://www.radiantmediaplayer.com/media/rmp-segment/bbb-abr-aes/chunklist_b2189923.m3u8
+*/
+
+//-------------------------------------------------------------------------------------
+
+  </script>
+</body>
+</html>
