@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+</head>
+<body>
+  <center>
+    <div id='myvideo'></div>
+    <video id='videotag' width="400" controls>
+      <!--source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4"-->
+      Your browser does not support HTML video.
+    </video>
+  </center>
+  <script type='text/javascript'>
+const b64toBlob = (b64Data, contentType='', sliceSize=512) => {
+  const byteCharacters = atob(b64Data);
+  const byteArrays = [];
+
+  for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+    const slice = byteCharacters.slice(offset, offset + sliceSize);
+
+    const byteNumbers = new Array(slice.length);
+    for (let i = 0; i < slice.length; i++) {
+      byteNumbers[i] = slice.charCodeAt(i);
+    }
+
+    const byteArray = new Uint8Array(byteNumbers);
+    byteArrays.push(byteArray);
+  }
+
+  const blob = new Blob(byteArrays, {type: contentType});
+  return blob;
+}
+
+const contentType = 'image/png';
+const b64Data = 'iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==';
+
+const blob = b64toBlob(b64Data, contentType);
+const blobUrl = URL.createObjectURL(blob);
+
+/*const img = document.createElement('img');
+img.src = blobUrl;
+document.body.appendChild(img);
+document.body.appendChild(document.createElement('br'));*/
+
+const link = document.createElement('a');
+link.href = blobUrl;
+link.innerText = 'Open the img URL';
+document.body.appendChild(link);
+document.body.appendChild(document.createElement('br'));
+
+var img = new Image();
+img.onload = function() {
+    URL.revokeObjectURL(this.src);     // clean-up memory
+    document.body.appendChild(this);   // add image to DOM
+    console.log('img, onload', this.src);
+}
+img.src = blobUrl;                     // can now "stream" the bytes
+//document.body.appendChild(img);
+
+//-------------------------------------------------------------------------------------
+
+const obj = {hello: 'world'};
+const blob2 = new Blob([JSON.stringify(obj, null, 2)], {type : 'application/json'});
+const urljson = URL.createObjectURL(blob2);
+
+console.log('obj, blob', obj, blob2, urljson);
+
+//-------------------------------------------------------------------------------------
+
+function typedArrayToURL(typedArray, mimeType) {
+  return URL.createObjectURL(new Blob([typedArray.buffer], {type: mimeType}))
+}
+
+const bytes = new Uint8Array(59);
+
+for(let i = 0; i < 59; i++) {
+  bytes[i] = 32 + i;
+}
+
+const url = typedArrayToURL(bytes, 'text/plain');
+
+const link2 = document.createElement('a');
+link2.href = url;
+link2.innerText = 'Open the array URL';
+
+document.body.appendChild(link2);
+document.body.appendChild(document.createElement('br'));
+//-------------------------------------------------------------------------------------
+
+  </script>
+</body>
+</html>
